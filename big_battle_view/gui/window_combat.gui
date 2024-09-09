@@ -6791,8 +6791,8 @@ types Big_Battle {
 
 					flowcontainer = {
 						ignoreinvisible = yes
+						direction = vertical
 						visible = "[Not(GetVariableSystem.Exists('total_maa_stats'))]"
-						spacing = 5
 
 						block "right" {}
 
@@ -6821,6 +6821,7 @@ types Big_Battle {
 								min_width = 50
 							}
 						}
+
 						spacer = { size = { 10 0 } }
 
 						flowcontainer = {
@@ -7108,19 +7109,60 @@ types Big_Battle {
 		}
 	}
 
-	type widget_bbv_maa_progressbars = widget {
+	type widget_bbv_maa_progressbars = vbox {
 		# size = { 100% 100% }
-		alwaystransparent = yes
+		layoutpolicy_horizontal = expanding
+		layoutpolicy_horizontal = expanding
 
 		widget = {
-			size = { 100% 23 }
+			layoutpolicy_horizontal = expanding
+			layoutpolicy_vertical = expanding
 
-			progressbar_standard = {
+			progressbar = {
+				visible = "[CombatWindow.GetCombat.MakeScope.Var('bbv_max_maa').IsSet]"
+				block "progress_behind" {
+					position = { 2 0 }
+				}
+				size = { 100% 100% }
+				max = "[FixedPointToFloat( CombatWindow.GetCombat.MakeScope.Var('bbv_max_maa').GetValue )]"
+				min = 0
+				progresstexture = "gfx/interface/colors/black.dds"
+				noprogresstexture = "gfx/0.dds"
+				block "right_mirror" {}
+				block "progress_damage" {
+					value = "[Multiply_CFixedPoint(CombatMaaItem.GetStat( 'damage' ), IntToFixedPoint(CombatMaaItem.GetCurrentStrength))]"
+				}
+
+			}
+			progressbar = {
+				icon = {
+					texture = "gfx/interface/colors/black.dds"
+					alpha = 0.1
+					size = { 100% 100% }
+				}
+				visible = "[CombatWindow.GetCombat.MakeScope.Var('bbv_max_maa').IsSet]"
+				size = { 100% 100% }
+				max = "[FixedPointToFloat( CombatWindow.GetCombat.MakeScope.Var('bbv_max_maa').GetValue )]"
+				min = 0
+				progresstexture = "gfx/interface/progressbars/progress_orange.dds"
+				noprogresstexture = "gfx/0.dds"
+				block "right_mirror" {}
+				block "progress_damage" {
+					value = "[Multiply_CFixedPoint(CombatMaaItem.GetStat( 'damage' ), IntToFixedPoint(CombatMaaItem.GetCurrentStrength))]"
+				}
+			}
+		}
+
+		widget = {
+			layoutpolicy_horizontal = expanding
+			layoutpolicy_vertical = expanding
+
+			progressbar = {
 				visible = "[CombatWindow.GetCombat.MakeScope.Var('bbv_max_maa').IsSet]"
 				parentanchor = bottom
-				position = { 2 0 }
-				# block "progress_behind" {
-				# }
+				block "progress_behind" {
+					position = { 2 0 }
+				}
 				size = { 100% 100% }
 				max = "[FixedPointToFloat( CombatWindow.GetCombat.MakeScope.Var('bbv_max_maa').GetValue )]"
 				min = 0
@@ -7133,7 +7175,7 @@ types Big_Battle {
 					value = "[Multiply_CFixedPoint(CombatMaaItem.GetStat( 'toughness' ), IntToFixedPoint(CombatMaaItem.GetCurrentStrength))]"
 				}
 			}
-			progressbar_standard = {
+			progressbar = {
 				visible = "[CombatWindow.GetCombat.MakeScope.Var('bbv_max_maa').IsSet]"
 				parentanchor = bottom
 				position = { 0 0 }
@@ -7147,44 +7189,6 @@ types Big_Battle {
 				block "right_mirror" {}
 				block "progress_toughness" {
 					value = "[Multiply_CFixedPoint(CombatMaaItem.GetStat( 'toughness' ), IntToFixedPoint(CombatMaaItem.GetCurrentStrength))]"
-				}
-			}
-		}
-
-
-		widget = {
-			size = { 100% 23 }
-			parentanchor = bottom
-			position = { 0 0 }
-
-			progressbar_standard = {
-				visible = "[CombatWindow.GetCombat.MakeScope.Var('bbv_max_maa').IsSet]"
-				parentanchor = bottom
-				position = { 2 0 }
-				# block "progress_behind" {
-				# }
-				size = { 100% 100% }
-				max = "[FixedPointToFloat( CombatWindow.GetCombat.MakeScope.Var('bbv_max_maa').GetValue )]"
-				min = 0
-				progresstexture = "gfx/interface/colors/black.dds"
-				noprogresstexture = "gfx/0.dds"
-				block "right_mirror" {}
-				block "progress_damage" {
-					value = "[Multiply_CFixedPoint(CombatMaaItem.GetStat( 'damage' ), IntToFixedPoint(CombatMaaItem.GetCurrentStrength))]"
-				}
-			}
-			progressbar_standard = {
-				visible = "[CombatWindow.GetCombat.MakeScope.Var('bbv_max_maa').IsSet]"
-				parentanchor = bottom
-				position = { 0 0 }
-				size = { 100% 100% }
-				max = "[FixedPointToFloat( CombatWindow.GetCombat.MakeScope.Var('bbv_max_maa').GetValue )]"
-				min = 0
-				progresstexture = "gfx/interface/progressbars/progress_orange.dds"
-				noprogresstexture = "gfx/0.dds"
-				block "right_mirror" {}
-				block "progress_damage" {
-					value = "[Multiply_CFixedPoint(CombatMaaItem.GetStat( 'damage' ), IntToFixedPoint(CombatMaaItem.GetCurrentStrength))]"
 				}
 			}
 		}
@@ -8526,6 +8530,37 @@ types Big_Battle {
 		}
 
 		hbox = {
+			layoutpolicy_horizontal = expanding
+
+			widget_bbv_maa_progressbars = {
+				block "attacker" {
+					visible = "[CombatWindow.GetLeftCombatSide.IsAttacker]"
+				}
+				blockoverride "progress_toughness" {
+					value = "[Multiply_CFixedPoint(CombatWindow.GetCombat.MakeScope.ScriptValue('bbv_attacker_knights_toughness'), Character.GetKnightEffectiveness)]"
+				}
+				blockoverride "progress_damage" {
+					value = "[Multiply_CFixedPoint(CombatWindow.GetCombat.MakeScope.ScriptValue('bbv_attacker_knights_damage'), Character.GetKnightEffectiveness)]"
+				}
+			}
+			widget_bbv_maa_progressbars = {
+				block "defender" {
+					visible = "[Not(CombatWindow.GetLeftCombatSide.IsAttacker)]"
+				}
+				blockoverride "progress_toughness" {
+					value = "[Multiply_CFixedPoint(CombatWindow.GetCombat.MakeScope.ScriptValue('bbv_defender_knights_toughness'), Character.GetKnightEffectiveness)]"
+				}
+				blockoverride "progress_damage" {
+					value = "[Multiply_CFixedPoint(CombatWindow.GetCombat.MakeScope.ScriptValue('bbv_defender_knights_damage'), Character.GetKnightEffectiveness)]"
+				}
+			}
+
+			widget = {
+				size = { 162 0 }
+			}
+		}
+
+		hbox = {
 			spacing = 5
 			margin = { 5 0 }
 			margin_right = 10
@@ -8594,29 +8629,6 @@ types Big_Battle {
 			spriteType = Corneredstretched
 			spriteborder = { 2 2 }
 			size = { 100% 100% }
-		}
-
-		widget_bbv_maa_progressbars = {
-			block "attacker" {
-				visible = "[CombatWindow.GetLeftCombatSide.IsAttacker]"
-			}
-			blockoverride "progress_toughness" {
-				value = "[Multiply_CFixedPoint(CombatWindow.GetCombat.MakeScope.ScriptValue('bbv_attacker_knights_toughness'), Character.GetKnightEffectiveness)]"
-			}
-			blockoverride "progress_damage" {
-				value = "[Multiply_CFixedPoint(CombatWindow.GetCombat.MakeScope.ScriptValue('bbv_attacker_knights_damage'), Character.GetKnightEffectiveness)]"
-			}
-		}
-		widget_bbv_maa_progressbars = {
-			block "defender" {
-				visible = "[Not(CombatWindow.GetLeftCombatSide.IsAttacker)]"
-			}
-			blockoverride "progress_toughness" {
-				value = "[Multiply_CFixedPoint(CombatWindow.GetCombat.MakeScope.ScriptValue('bbv_defender_knights_toughness'), Character.GetKnightEffectiveness)]"
-			}
-			blockoverride "progress_damage" {
-				value = "[Multiply_CFixedPoint(CombatWindow.GetCombat.MakeScope.ScriptValue('bbv_defender_knights_damage'), Character.GetKnightEffectiveness)]"
-			}
 		}
 	}
 
