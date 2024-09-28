@@ -42,3 +42,108 @@ test_sgui_new = {
         add_gold = 1000
     }
 }
+
+small_battle_view = {
+  is_shown = {
+    var:battle_view ?= flag:small
+  }
+  effect = {
+    set_variable = {
+      name = battle_view
+      value = falg:small
+    }
+  }
+}
+
+big_battle_view = {
+  is_shown = {
+    var:battle_view ?= flag:big
+  }
+  effect = {
+    set_variable = {
+      name = battle_view
+      value = falg:big
+    }
+  }
+}
+
+# defult
+split_battle_view = {
+  effect = {
+    remove_variable = battle_view
+  }
+}
+
+battle_map = {
+  effect = {
+    clear_variable_list = left_levies
+    while = {
+      count = 100
+      create_character = {
+        culture = combat_attacker.side_primary_participant.culture
+        faith = combat_attacker.side_primary_participant.faith
+        age = 25
+        gender = male
+        location = root.location
+
+        after_creation = {
+          prev = {
+            add_to_variable_list = {
+              name = left_levies
+              target = prev
+            }
+          }
+          death = natural
+        }
+      }
+    }
+  }
+}
+
+
+
+bbv_grab_maa_values = {
+  effect = {
+    if = {
+      limit = {
+        OR = {
+          NOT = { exists = var:bbv_max_maa }
+          AND = {
+            exists = var:bbv_max_maa
+            var:bbv_max_maa < scope:value
+          }
+        }
+      }
+      set_variable = {
+        name = bbv_max_maa
+        value = scope:value
+      }
+    }
+  }
+}
+
+bbv_clear_max_maa = {
+  effect = {
+    remove_variable = bbv_max_maa
+  }
+}
+
+bbv_count_battle_days = {
+  effect = {
+    if = {
+      limit = {
+        NOT = { has_variable = battle_started }
+      }
+      set_variable = {
+        name = battle_started
+        value = 1
+      }
+    }
+    else = {
+      change_variable = {
+        name = battle_started
+        add = 1
+      }
+    }
+  }
+}

@@ -1,0 +1,8 @@
+﻿l_english:
+hover_hide_battle: "#T Hover here to show the map"
+toggle_full_battle_view: "#T [SelectLocalization(GetVariableSystem.HasValue('big_battle', 'big'), 'split_battle_view', 'full_battle_view')]"
+full_battle_view: "Full screen"
+split_battle_view: "Split view"
+show_battle_window: "#T Show battle, F"
+big_battle_window: "#T Maximize"
+show_army_hole: "#T Show map"
